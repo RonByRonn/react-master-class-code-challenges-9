@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -83,6 +84,9 @@ function Coins() {
 	return (
 		// 5.4 강의 8분56초에서 멈춤...
 		<Container>
+			<Helmet>
+				<title>코인</title>
+			</Helmet>
 			<Header>
 				<Title>코인</Title>
 			</Header>
