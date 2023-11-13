@@ -27,7 +27,9 @@ const Coin = styled.li`
 		padding: 20px;
 		transition: color 0.2s ease-in;
 		// coin card의 끝부분까지도 클릭할 수 있게 해줌
-		display: block;
+		display: flex;
+		align-items: center;
+		/* justify-content: center; */
 	}
 	&:hover {
 		// Link도 결국에는 anchor가 됨. 그치만 react-router-dom이 핸들링하기 위한 특별한 이벤트 리스너가 있음
@@ -45,6 +47,12 @@ const Title = styled.h1`
 const Loader = styled.span`
 	text-align: center;
 	display: block;
+`;
+
+const Img = styled.img`
+	width: 35px;
+	height: 35px;
+	margin-right: 10px;
 `;
 
 interface CoinInterface {
@@ -70,6 +78,7 @@ function Coins() {
 		})();
 	}, []);
 	return (
+		// 5.4 강의 8분56초에서 멈춤...
 		<Container>
 			<Header>
 				<Title>코인</Title>
@@ -80,7 +89,17 @@ function Coins() {
 				<CoinsList>
 					{coins.map((coin) => (
 						<Coin key={coin.id}>
-							<Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+							<Link
+								to={{
+									pathname: `/${coin.id}`,
+									state: { name: coin.name },
+								}}
+							>
+								<Img
+									src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+								/>
+								{coin.name} &rarr;
+							</Link>
 						</Coin>
 					))}
 				</CoinsList>
