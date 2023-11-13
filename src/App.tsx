@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from "react-query/devtools";
 import styled, { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import Router from "./Router";
@@ -34,6 +35,7 @@ function App() {
 			{/* <Reset /> */}
 			<GlobalStyle />
 			<Router />
+			<ReactQueryDevtools initialIsOpen={true} />
 		</>
 	);
 }
