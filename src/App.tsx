@@ -24,17 +24,39 @@ const Boards = styled.div`
 
 function App() {
 	const [toDos, setToDos] = useRecoilState(toDoState);
-	const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+	const onDragEnd = (info: DropResult) => {
+		const { source, destination, draggableId } = info;
 		if (!destination) return;
-
-		/* setToDos((oldToDos) => {
-			const toDosCopy = [...oldToDos];
-			// 1) Delete item on source.index
-			toDosCopy.splice(source.index, 1);
-			// 2) Put back the item on the destination.index
-			toDosCopy.splice(destination?.index, 0, draggableId);
-			return toDosCopy;
-		}); */
+		if (destination?.droppableId === source.droppableId) {
+			// same board movement.
+			setToDos((allBoards) => {
+				const boardCopy = [...allBoards[source.droppableId]];
+				// 1) Delete item on source.index
+				boardCopy.splice(source.index, 1);
+				// 2) Put back the item on the destination.index
+				boardCopy.splice(destination?.index, 0, draggableId);
+				return {
+					...allBoards,
+					// 아래는 키로 변수를 입력하기 위해 대괄호를 쓴 것.
+					[source.droppableId]: boardCopy,
+				};
+			});
+		} else {
+			setToDos((allBoards) => {
+				const sourceBoardCopy = [...allBoards[source.droppableId]];
+				const targetBoardCopy = [...allBoards[destination.droppableId]];
+				// 1) Delete item on source.index
+				sourceBoardCopy.splice(source.index, 1);
+				// 2) Put back the item on the destination.index
+				targetBoardCopy.splice(destination?.index, 0, draggableId);
+				return {
+					...allBoards,
+					// 아래는 키로 변수를 입력하기 위해 대괄호를 쓴 것.
+					[source.droppableId]: sourceBoardCopy,
+					[destination.droppableId]: targetBoardCopy,
+				};
+			});
+		}
 	};
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>
