@@ -12,10 +12,10 @@ const GlobalStyle = createGlobalStyle`
 		box-sizing: border-box;
 	}
 	body {
+		font-weight: 300;
 		font-family: 'Source Code Pro', monospace;
 		background-color: ${(props) => props.theme.bgColor};
-		color: ${(props) => props.theme.textColor};
-		font-weight: 300;
+		color: black;
 		line-height: 1.2;
 	}
 	a {
