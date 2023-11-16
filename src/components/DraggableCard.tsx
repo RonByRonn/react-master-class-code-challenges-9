@@ -14,14 +14,16 @@ const Card = styled.div<{ isDragging: boolean }>`
 `;
 
 interface IDraggableCardProps {
-	toDo: string;
+	toDoId: number;
+	toDoText: string;
 	index: number;
 }
 
-function DraggableCard({ toDo, index }: IDraggableCardProps) {
+function DraggableCard({ toDoId, toDoText, index }: IDraggableCardProps) {
 	return (
 		// key와 draggableId가 같아야 함 (이 패키지 특징)
-		<Draggable key={toDo} draggableId={toDo} index={index}>
+		// 아래 toDoId + ""는 타입을 스트링으로 바꿔줌.
+		<Draggable draggableId={toDoId + ""} index={index}>
 			{(magic, snapshot) => (
 				<Card
 					isDragging={snapshot.isDragging}
@@ -29,7 +31,7 @@ function DraggableCard({ toDo, index }: IDraggableCardProps) {
 					{...magic.draggableProps}
 					{...magic.dragHandleProps}
 				>
-					{toDo}
+					{toDoText}
 				</Card>
 			)}
 		</Draggable>
