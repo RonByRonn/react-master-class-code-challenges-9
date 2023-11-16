@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import DraggableCard from "./DraggableCard";
@@ -42,9 +43,21 @@ interface IBoardProps {
 }
 
 function Board({ toDos, boardId }: IBoardProps) {
+	// reference는 HTML 요소를 가져와서 그걸 변형할 수 있도록 해줌.
+	const inputRef = useRef<HTMLInputElement>(null);
+	const onClick = () => {
+		// vanilla JS에서는 document.getElementBy 어쩌구 하면 포커스할 수 있음.
+		inputRef.current?.focus();
+		setTimeout(() => {
+			// blur는 unfocus임
+			inputRef.current?.blur();
+		}, 5000);
+	};
 	return (
 		<Wrapper>
 			<Title>{boardId}</Title>
+			<input ref={inputRef} placeholder="grab me" />
+			<button onClick={onClick}>click me</button>
 			<Droppable droppableId={boardId}>
 				{(magic, snapshot) => (
 					<Area
