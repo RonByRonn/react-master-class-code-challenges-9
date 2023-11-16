@@ -9,6 +9,8 @@ const Wrapper = styled.div`
 	border-radius: 5px;
 	width: 300px;
 	min-height: 300px;
+	display: flex;
+	flex-direction: column;
 `;
 
 const Title = styled.h2`
@@ -16,6 +18,18 @@ const Title = styled.h2`
 	font-weight: 600;
 	margin-bottom: 10px;
 	font-size: 18px;
+`;
+
+interface IAreaProps {
+	isDraggingFromThis: boolean;
+	isDraggingOver: boolean;
+}
+
+const Area = styled.div<IAreaProps>`
+	background-color: ${(props) =>
+		props.isDraggingOver ? "pink" : props.isDraggingFromThis ? "red" : "blue"};
+	flex-grow: 1;
+	transition: background-color 0.3s ease-in-out;
 `;
 
 interface IBoardProps {
@@ -28,9 +42,11 @@ function Board({ toDos, boardId }: IBoardProps) {
 		<Wrapper>
 			<Title>{boardId}</Title>
 			<Droppable droppableId={boardId}>
-				{(magic) => (
-					<div
-						style={{ backgroundColor: "green" }}
+				{(magic, snapshot) => (
+					<Area
+						isDraggingOver={snapshot.isDraggingOver}
+						// Boolean(arg)의 arg가 null이면 false, 아니면 true
+						isDraggingFromThis={Boolean(snapshot.draggingFromThisWith)}
 						ref={magic.innerRef}
 						{...magic.droppableProps}
 					>
@@ -38,7 +54,7 @@ function Board({ toDos, boardId }: IBoardProps) {
 							<DraggableCard key={toDo} index={index} toDo={toDo} />
 						))}
 						{magic.placeholder}
-					</div>
+					</Area>
 				)}
 			</Droppable>
 		</Wrapper>
