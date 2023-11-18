@@ -12,9 +12,7 @@ const Wrapper = styled.div`
 const Box = styled(motion.div)`
 	width: 200px;
 	height: 200px;
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	background-color: rgba(255, 255, 255, 0.2);
+	background-color: rgba(255, 255, 255, 1);
 	border-radius: 40px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
@@ -29,41 +27,22 @@ const Circle = styled(motion.div)`
 `;
 
 const boxVariants = {
-	start: { opacity: 0, scale: 0.5 },
-	end: {
-		scale: 1,
-		opacity: 1,
-		transition: {
-			type: "spring",
-			duration: 0.5,
-			bounce: 0.5,
-			delayChildren: 0.5,
-			staggerChildren: 0.2,
-		},
-	},
-};
-
-const circleVariants = {
-	start: {
-		opacity: 0,
-		y: 10, // <-- 이거는 CSS가 아니라 motion 패키지 전용 문법
-	},
-	end: {
-		opacity: 1,
-		y: 0,
-	},
+	hover: { scale: 1.5, rotateZ: 90 },
+	click: { scale: 1, borderRadius: "100px" },
+	drag: { backgroundColor: "rgb(46, 204, 113)", transition: { duration: 10 } },
 };
 
 function App() {
 	return (
 		<Wrapper>
-			{/* motion은 기본적으로 자식들에게도 variants 효과를 적용한다 */}
-			<Box variants={boxVariants} initial="start" animate="end">
-				<Circle variants={circleVariants} />
-				<Circle variants={circleVariants} />
-				<Circle variants={circleVariants} />
-				<Circle variants={circleVariants} />
-			</Box>
+			{/* 아래 whileDrag의 백그라운드 컬러에 그냥 "블루" 같은 스트링을 적으면 색상 변화에 애니메이션이 없음. rgb나 rgba로 숫자를 적어야 함 */}
+			<Box
+				drag
+				variants={boxVariants}
+				whileHover="hover"
+				whileDrag="drag"
+				whileTap="click"
+			/>
 		</Wrapper>
 	);
 }
