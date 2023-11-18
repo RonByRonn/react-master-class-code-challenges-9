@@ -1,5 +1,4 @@
-import { motion } from "framer-motion";
-import { useRef } from "react";
+import { motion, useMotionValue, useMotionValueEvent } from "framer-motion";
 import styled from "styled-components";
 
 const Wrapper = styled.div`
@@ -10,17 +9,6 @@ const Wrapper = styled.div`
 	align-items: center;
 `;
 
-const BiggerBox = styled.div`
-	width: 600px;
-	height: 600px;
-	background-color: rgba(255, 255, 255, 0.2);
-	border-radius: 40px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	/* overflow: hidden; */
-`;
-
 const Box = styled(motion.div)`
 	width: 200px;
 	height: 200px;
@@ -29,31 +17,16 @@ const Box = styled(motion.div)`
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const boxVariants = {
-	hover: { scale: 1.5, rotateZ: 90 },
-	click: { scale: 1, borderRadius: "100px" },
-	drag: { backgroundColor: "rgb(46, 204, 113)", transition: { duration: 10 } },
-};
-
 function App() {
-	const biggerBoxRef = useRef<HTMLDivElement>(null);
+	const x = useMotionValue(0);
+	// 이 x는 단순 콘솔 로그로 변화 추적이 안된다. 왜냐하면 x가 바뀔 때마다 렌더링이 일어나는 것을 막기 위해, 리액트 월드가 아닌 곳에 x가 위치하기 때문.
+	useMotionValueEvent(x, "change", (l) => {
+		console.log(l);
+	});
 	return (
 		<Wrapper>
-			{/* 아래 whileDrag의 백그라운드 컬러에 그냥 "블루" 같은 스트링을 적으면 색상 변화에 애니메이션이 없음. rgb나 rgba로 숫자를 적어야 함 */}
-			<BiggerBox ref={biggerBoxRef}>
-				<Box
-					// drag="x"
-					drag
-					// dragConstraints={{ top: -200, bottom: 200, left: -200, right: 200 }}
-					dragConstraints={biggerBoxRef}
-					dragSnapToOrigin
-					dragElastic={0.5}
-					variants={boxVariants}
-					whileHover="hover"
-					whileDrag="drag"
-					whileTap="click"
-				/>
-			</BiggerBox>
+			<button onClick={() => x.set(200)}>click me</button>
+			<Box style={{ x }} drag="x" dragSnapToOrigin />
 		</Wrapper>
 	);
 }
