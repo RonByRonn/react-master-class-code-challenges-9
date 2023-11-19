@@ -2,16 +2,18 @@ import {
 	motion,
 	useMotionValue,
 	useMotionValueEvent,
+	useScroll,
 	useTransform,
 } from "framer-motion";
 import styled from "styled-components";
 
-const Wrapper = styled.div`
-	height: 100vh;
+const Wrapper = styled(motion.div)`
+	height: 200vh;
 	width: 100vw;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	/* background: linear-gradient(135deg, rgb(238, 0, 153), rgb(221, 0, 238)); */
 `;
 
 const Box = styled(motion.div)`
@@ -24,15 +26,29 @@ const Box = styled(motion.div)`
 
 function App() {
 	const x = useMotionValue(0);
-	const scale = useTransform(x, [-800, 0, 800], [2, 1, 0.1]);
-	// 이 x는 단순 콘솔 로그로 변화 추적이 안된다. 왜냐하면 x가 바뀔 때마다 렌더링이 일어나는 것을 막기 위해, 리액트 월드가 아닌 곳에 x가 위치하기 때문.
-	useMotionValueEvent(scale, "change", (l) => {
-		console.log(l);
+	const rotateZ = useTransform(x, [-800, 800], [-360, 360]);
+	const gradient = useTransform(
+		x,
+		[-800, 800],
+		[
+			"linear-gradient(135deg, rgb(0, 238, 238), rgb(8, 0, 238))",
+			"linear-gradient(135deg, rgb(0, 238, 135), rgb(238, 234, 0))",
+		]
+	);
+	const { scrollY, scrollYProgress } = useScroll();
+	const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
+
+	useMotionValueEvent(scrollY, "change", (latest) => {
+		console.log("scrollY: ", latest);
 	});
+
+	useMotionValueEvent(scrollYProgress, "change", (latest) => {
+		console.log("scrollYProgress: ", latest);
+	});
+
 	return (
-		<Wrapper>
-			<button onClick={() => x.set(200)}>click me</button>
-			<Box style={{ x, scale }} drag="x" dragSnapToOrigin />
+		<Wrapper style={{ background: gradient }}>
+			<Box style={{ x, rotateZ, scale }} drag="x" dragSnapToOrigin />
 		</Wrapper>
 	);
 }
