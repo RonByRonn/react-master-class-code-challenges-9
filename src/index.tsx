@@ -3,7 +3,7 @@ import { RecoilRoot } from "recoil";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import App from "./App";
-import { darkTheme } from "./theme";
+import { theme } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
   	@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400&display=swap');
@@ -30,7 +30,7 @@ const root = ReactDOM.createRoot(
 root.render(
 	// <React.StrictMode>
 	<RecoilRoot>
-		<ThemeProvider theme={darkTheme}>
+		<ThemeProvider theme={theme}>
 			<GlobalStyle />
 			<App />
 		</ThemeProvider>
