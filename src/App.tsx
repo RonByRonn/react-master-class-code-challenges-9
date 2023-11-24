@@ -9,14 +9,15 @@ function App() {
 		<Router>
 			<Header />
 			<Switch>
-				<Route path="/">
-					<Home />
-				</Route>
 				<Route path="/tv">
 					<Tv />
 				</Route>
 				<Route path="/search">
 					<Search />
+				</Route>
+				{/* path="/"는 맨끝에 넣어야 함 */}
+				<Route path="/">
+					<Home />
 				</Route>
 			</Switch>
 		</Router>
