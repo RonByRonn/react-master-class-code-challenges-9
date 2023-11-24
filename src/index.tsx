@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
@@ -23,16 +24,20 @@ const GlobalStyle = createGlobalStyle`
 	}
 `;
 
+const client = new QueryClient();
+
 const root = ReactDOM.createRoot(
 	document.getElementById("root") as HTMLElement
 );
 root.render(
 	// <React.StrictMode>
 	<RecoilRoot>
-		<ThemeProvider theme={theme}>
-			<GlobalStyle />
-			<App />
-		</ThemeProvider>
+		<QueryClientProvider client={client}>
+			<ThemeProvider theme={theme}>
+				<GlobalStyle />
+				<App />
+			</ThemeProvider>
+		</QueryClientProvider>
 	</RecoilRoot>
 	// </React.StrictMode>
 );
