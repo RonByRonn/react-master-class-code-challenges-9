@@ -8,6 +8,7 @@ import { makeImagePath } from "../utils";
 const Wrapper = styled.div`
 	background-color: black;
 	overflow-x: hidden;
+	padding-bottom: 200px;
 `;
 
 const Loader = styled.div`
@@ -59,6 +60,12 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
 	background-position: center center;
 	height: 200px;
 	font-size: 40px;
+	&:first-child {
+		transform-origin: center left;
+	}
+	&:last-child {
+		transform-origin: center right;
+	}
 `;
 
 const rowVariants = {
@@ -70,6 +77,21 @@ const rowVariants = {
 	},
 	exit: {
 		x: -window.outerWidth + 10,
+	},
+};
+
+const boxVariants = {
+	normal: {
+		scale: 1,
+	},
+	hover: {
+		scale: 1.5,
+		y: -50,
+		transition: {
+			delay: 0.5,
+			duration: 0.2,
+			type: "tween",
+		},
 	},
 };
 
@@ -113,7 +135,7 @@ function Home() {
 								initial="hidden"
 								animate="visible"
 								exit="exit"
-								transition={{ type: "tween", duration: 0.6 }}
+								transition={{ type: "tween", duration: 1 }}
 								key={index}
 							>
 								{data?.results
@@ -122,6 +144,10 @@ function Home() {
 									.map((movie) => (
 										<Box
 											key={movie.id}
+											whileHover="hover"
+											initial="normal"
+											variants={boxVariants}
+											transition={{ type: "tween" }}
 											bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
 										/>
 									))}
