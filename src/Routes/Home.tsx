@@ -68,6 +68,19 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
 	}
 `;
 
+const Info = styled(motion.h4)`
+	width: 100%;
+	padding: 10px;
+	background-color: ${(props) => props.theme.black.lighter};
+	position: absolute;
+	bottom: 0;
+	opacity: 0;
+	h4 {
+		text-align: center;
+		font-size: 16px;
+	}
+`;
+
 const rowVariants = {
 	hidden: {
 		x: window.outerWidth - 10,
@@ -95,6 +108,17 @@ const boxVariants = {
 	},
 };
 
+const infoVariants = {
+	hover: {
+		opacity: 1,
+		transition: {
+			delay: 0.5,
+			duration: 0.2,
+			type: "tween",
+		},
+	},
+};
+
 const offset = 6;
 
 function Home() {
@@ -114,6 +138,7 @@ function Home() {
 	};
 	const [leaving, setLeaving] = useState(false);
 	const toggleLeaving = () => setLeaving((prev) => !prev);
+
 	return (
 		<Wrapper>
 			{isLoading ? (
@@ -149,7 +174,11 @@ function Home() {
 											variants={boxVariants}
 											transition={{ type: "tween" }}
 											bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-										/>
+										>
+											<Info variants={infoVariants}>
+												<h4>{movie.title}</h4>
+											</Info>
+										</Box>
 									))}
 							</Row>
 						</AnimatePresence>
