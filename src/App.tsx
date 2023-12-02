@@ -16,7 +16,7 @@ function App() {
 					<Search />
 				</Route>
 				{/* path="/"는 맨끝에 넣어야 함 */}
-				<Route path="/">
+				<Route path={["/", "/movies/:movieId"]}>
 					<Home />
 				</Route>
 			</Switch>

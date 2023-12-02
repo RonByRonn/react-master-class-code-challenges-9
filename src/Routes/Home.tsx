@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMoviesResult, getMovies } from "../api";
 import { makeImagePath } from "../utils";
@@ -66,6 +67,7 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
 	&:last-child {
 		transform-origin: center right;
 	}
+	cursor: pointer;
 `;
 
 const Info = styled(motion.h4)`
@@ -99,7 +101,7 @@ const boxVariants = {
 	},
 	hover: {
 		scale: 1.5,
-		y: -50,
+		y: -64,
 		transition: {
 			delay: 0.5,
 			duration: 0.2,
@@ -122,6 +124,9 @@ const infoVariants = {
 const offset = 6;
 
 function Home() {
+	const history = useHistory();
+	const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+	console.log(bigMovieMatch);
 	const { data, isLoading } = useQuery<IGetMoviesResult>(
 		["movies", "nowPlaying"],
 		getMovies
@@ -138,6 +143,9 @@ function Home() {
 	};
 	const [leaving, setLeaving] = useState(false);
 	const toggleLeaving = () => setLeaving((prev) => !prev);
+	const onBoxClicked = (movieId: number) => {
+		history.push(`/movies/${movieId}`);
+	};
 
 	return (
 		<Wrapper>
@@ -168,6 +176,8 @@ function Home() {
 									.slice(offset * index, offset * index + offset)
 									.map((movie) => (
 										<Box
+											layoutId={movie.id + ""}
+											onClick={() => onBoxClicked(movie.id)}
 											key={movie.id}
 											whileHover="hover"
 											initial="normal"
@@ -183,6 +193,23 @@ function Home() {
 							</Row>
 						</AnimatePresence>
 					</Slider>
+					<AnimatePresence>
+						{bigMovieMatch ? (
+							<motion.div
+								layoutId={bigMovieMatch.params.movieId}
+								style={{
+									position: "absolute",
+									width: "40vw",
+									height: "80vh",
+									backgroundColor: "red",
+									top: 50,
+									left: 0,
+									right: 0,
+									margin: "0 auto",
+								}}
+							/>
+						) : null}
+					</AnimatePresence>
 				</>
 			)}
 		</Wrapper>
