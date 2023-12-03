@@ -5,7 +5,8 @@ import {
 	useScroll,
 } from "framer-motion";
 import { useState } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
@@ -55,7 +56,7 @@ const Item = styled.li`
 	}
 `;
 
-const Search = styled.span`
+const Search = styled.form`
 	color: white;
 	display: flex;
 	align-items: center;
@@ -112,6 +113,10 @@ const navVariants = {
 	},
 };
 
+interface IForm {
+	keyword: string;
+}
+
 function Header() {
 	const [searchOpen, setSearchOpen] = useState(false);
 	// Router와 마찬가지로 여기서도 homeMatch는 null이 되진 않고, 항상 object로는 나오되 isExact 프로퍼티가 true이거나 false로 됨
@@ -148,6 +153,14 @@ function Header() {
 		}
 	});
 
+	const history = useHistory();
+
+	const { register, handleSubmit } = useForm<IForm>();
+
+	const onValid = (data: IForm) => {
+		history.push(`/search?keyword=${data.keyword}`);
+	};
+
 	return (
 		<Nav variants={navVariants} animate={navAnimation} initial={"top"}>
 			<Col>
@@ -176,7 +189,7 @@ function Header() {
 				</Items>
 			</Col>
 			<Col>
-				<Search>
+				<Search onSubmit={handleSubmit(onValid)}>
 					<motion.svg
 						onClick={toggleSearch}
 						animate={{ x: searchOpen ? -180 : 0 }}
@@ -194,6 +207,7 @@ function Header() {
 					<Input
 						// animate={inputAnimation}
 						// initial={{ scaleX: 0 }}
+						{...register("keyword", { required: true, minLength: 2 })}
 						animate={{ scaleX: searchOpen ? 1 : 0 }}
 						transition={{ type: "linear" }}
 						placeholder="Search for movie or tv shows..."
