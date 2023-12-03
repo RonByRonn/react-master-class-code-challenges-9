@@ -1,4 +1,4 @@
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Route, HashRouter as Router, Switch } from "react-router-dom";
 import Header from "./Components/Header";
 import Home from "./Routes/Home";
 import Search from "./Routes/Search";
@@ -9,12 +9,13 @@ function App() {
 		<Router>
 			<Header />
 			<Switch>
-				<Route path="/tv">
-					<Tv />
-				</Route>
-				<Route path="/search">
+				<Route path={["/search"]}>
 					<Search />
 				</Route>
+				<Route path={["/tv", "/tv/:tvShowId"]}>
+					<Tv />
+				</Route>
+
 				{/* path="/"는 맨끝에 넣어야 함 */}
 				<Route path={["/", "/movies/:movieId"]}>
 					<Home />

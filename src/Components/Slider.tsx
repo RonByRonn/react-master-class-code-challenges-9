@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
-import { useHistory } from "react-router-dom";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { IGetMoviesResult } from "../api";
+import { IGetMoviesResult, IGetTvShowsResult, IMovie, ITvShow } from "../api";
 import { sliderTitleState } from "../atoms";
 import { makeImagePath } from "../utils";
 
@@ -70,6 +70,28 @@ const ChevronLeftWrapper = styled(motion.div)`
 	cursor: pointer;
 `;
 
+const ChevronRightWrapper = styled(motion.div)`
+	position: absolute;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	font-size: 32px;
+	padding: 0 32px;
+	height: 100%;
+	right: 0%;
+	background: linear-gradient(
+		to left,
+		rgba(0, 0, 0, 1),
+		rgba(255, 255, 255, 0)
+	);
+	cursor: pointer;
+`;
+
+const SliderTitle = styled.h1`
+	font-size: 24px;
+	margin: 12px 24px;
+`;
+
 const rowVariants = {
 	hidden: {
 		x: window.outerWidth - 10,
@@ -112,25 +134,48 @@ const offset = 6;
 
 interface ISliderProps {
 	sliderTitle: string;
-	data: IGetMoviesResult;
+	data: IGetMoviesResult | IGetTvShowsResult;
 }
 
 function Slider({ data, sliderTitle }: ISliderProps) {
 	const history = useHistory();
+	const location = useLocation();
 	const [leaving, setLeaving] = useState(false);
 	const toggleLeaving = () => setLeaving((prev) => !prev);
+	const onExitComplete = () => {
+		setIsLeft(null);
+		toggleLeaving();
+	};
 	const onBoxClicked = (movieId: number) => {
-		history.push(`/movies/${movieId}`);
+		// if (location.pathname === "/search") {
+		// 	(data as IGetMoviesResult).results[0].title !== undefined
+		// 		? history.push(
+		// 				`${location.pathname + location.search}&movie=${movieId}`
+		// 		  )
+		// 		: history.push(`${location.pathname + location.search}&tv=${movieId}`);
+		// }
+		if (location.pathname !== "/search") {
+			(data as IGetMoviesResult).results[0].title !== undefined
+				? history.push(`/movies/${movieId}`)
+				: history.push(`/tv/${movieId}`);
+		} else {
+			(data as IGetMoviesResult).results[0].title !== undefined
+				? history.push(`/search${location.search}&movie=${movieId}`)
+				: history.push(`/search${location.search}&tv=${movieId}`);
+		}
+
 		setSliderTitle(sliderTitle);
 	};
 	const [index, setIndex] = useState(0);
 	const setSliderTitle = useSetRecoilState(sliderTitleState);
 	const totalMovies = data.results.length - 1;
-	const maxIndex = Math.floor(totalMovies / offset) - 1;
+	const maxIndex = Math.max(Math.floor(totalMovies / offset) - 1, 0);
+	const [isLeft, setIsLeft] = useState<boolean | null>(null);
 	const increaseIndex = () => {
 		if (data) {
 			if (leaving) return;
 			toggleLeaving();
+			setIsLeft(false);
 			setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
 		}
 	};
@@ -138,22 +183,26 @@ function Slider({ data, sliderTitle }: ISliderProps) {
 		if (data) {
 			if (leaving) return;
 			toggleLeaving();
+			setIsLeft(true);
 			setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
 		}
 	};
 
 	return (
 		<Wrapper>
-			<AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+			<SliderTitle>{sliderTitle}</SliderTitle>
+			<AnimatePresence initial={false} onExitComplete={onExitComplete}>
 				<ChevronLeftWrapper>
-					<FaChevronLeft />
+					<FaChevronLeft onClick={decreaseIndex} />
 				</ChevronLeftWrapper>
-
+				<ChevronRightWrapper>
+					<FaChevronRight onClick={increaseIndex} />
+				</ChevronRightWrapper>
 				<Row
 					variants={rowVariants}
-					initial="hidden"
+					initial={isLeft ? "exit" : "hidden"}
 					animate="visible"
-					exit="exit"
+					exit={isLeft ? "hidden" : "exit"}
 					transition={{ type: "tween", duration: 1 }}
 					key={index}
 				>
@@ -172,7 +221,11 @@ function Slider({ data, sliderTitle }: ISliderProps) {
 								bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
 							>
 								<Info variants={infoVariants}>
-									<h4>{movie.title}</h4>
+									<h4>
+										{(movie as IMovie).title !== undefined
+											? (movie as IMovie).title
+											: (movie as ITvShow).name}
+									</h4>
 								</Info>
 							</Box>
 						))}

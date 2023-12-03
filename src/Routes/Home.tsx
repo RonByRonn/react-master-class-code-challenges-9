@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import Images from "../Components/Images";
 import Slider from "../Components/Slider";
 import { IGetMoviesResult, IMovie, getMovies } from "../api";
 import { sliderTitleState } from "../atoms";
@@ -90,6 +91,25 @@ const SliderWrapper = styled.div`
 	flex-direction: column;
 	/* align-items: center; */
 	/* justify-content: space-between; */
+`;
+
+const PosterWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`;
+
+const Poster = styled(motion.div)<{ bgPhoto: string }>`
+	background-color: white;
+	background-image: url(${(props) => props.bgPhoto});
+	background-size: cover;
+	background-position: center center;
+	width: 300px;
+	height: 300px;
+	/* height: 200px; */
+	/* font-size: 40px; */
+	/* width: 100%; */
+	/* height: 100%; */
 `;
 
 function Home() {
@@ -199,6 +219,7 @@ function Home() {
 											/>
 											<BigTitle>{clickedMovie.title}</BigTitle>
 											<BigOverview>{clickedMovie.overview}</BigOverview>
+											<Images id={clickedMovie.id} kind="movie" />
 										</>
 									)}
 								</BigMovie>

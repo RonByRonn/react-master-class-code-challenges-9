@@ -122,7 +122,7 @@ function Header() {
 	// Router와 마찬가지로 여기서도 homeMatch는 null이 되진 않고, 항상 object로는 나오되 isExact 프로퍼티가 true이거나 false로 됨
 	const homeMatch = useRouteMatch("/");
 	const tvMatch = useRouteMatch("/tv");
-	console.log(homeMatch, tvMatch);
+
 	const inputAnimation = useAnimation();
 	const navAnimation = useAnimation();
 	const { scrollY } = useScroll();
