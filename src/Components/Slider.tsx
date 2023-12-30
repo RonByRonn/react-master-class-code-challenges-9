@@ -93,15 +93,24 @@ const SliderTitle = styled.h1`
 `;
 
 const rowVariants = {
-	hidden: {
-		x: window.outerWidth - 10,
-	},
-	visible: {
+	// hidden: {
+	// 	x: window.outerWidth - 10,
+	// },
+	// visible: {
+	// 	x: 0,
+	// },
+	// exit: {
+	// 	x: -window.outerWidth + 10,
+	// },
+	initial: (isLeft: boolean) => ({
+		x: isLeft === false ? "100%" : "-100%",
+	}),
+	animate: {
 		x: 0,
 	},
-	exit: {
-		x: -window.outerWidth + 10,
-	},
+	exit: (isLeft: boolean) => ({
+		x: isLeft === false ? "-100%" : "100%",
+	}),
 };
 
 const boxVariants = {
@@ -191,7 +200,11 @@ function Slider({ data, sliderTitle }: ISliderProps) {
 	return (
 		<Wrapper>
 			<SliderTitle>{sliderTitle}</SliderTitle>
-			<AnimatePresence initial={false} onExitComplete={onExitComplete}>
+			<AnimatePresence
+				initial={false}
+				onExitComplete={onExitComplete}
+				custom={isLeft}
+			>
 				<ChevronLeftWrapper>
 					<FaChevronLeft onClick={decreaseIndex} />
 				</ChevronLeftWrapper>
@@ -200,9 +213,10 @@ function Slider({ data, sliderTitle }: ISliderProps) {
 				</ChevronRightWrapper>
 				<Row
 					variants={rowVariants}
-					initial={isLeft ? "exit" : "hidden"}
-					animate="visible"
-					exit={isLeft ? "hidden" : "exit"}
+					custom={isLeft}
+					initial="initial"
+					animate="animate"
+					exit="exit"
 					transition={{ type: "tween", duration: 1 }}
 					key={index}
 				>
